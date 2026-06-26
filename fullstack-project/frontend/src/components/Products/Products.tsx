@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef } from "react";
-import { PRODUCTS } from "../../data/products";
+import React, { useRef, useState, useEffect } from "react";
 import { useCart } from "../../store/CartContext";
+import { Product } from "../../types";
 import { Heart, Star, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 
@@ -14,6 +14,53 @@ export const Products: React.FC = () => {
     toggleWishlist,
     isWishlisted,
   } = useCart();
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/products");
+        if (!res.ok) {
+          throw new Error("Failed to fetch products from the server");
+        }
+        const data = await res.json();
+        
+        // Map database products to the frontend Product interface
+        const mapped: Product[] = data.map((p: any) => {
+          const sellingPrice = p.discount_price ?? p.price;
+          const originalPrice = p.price;
+          const hasDiscount = p.discount_price && p.discount_price < p.price;
+          const discountPercent = hasDiscount ? Math.round(((originalPrice - sellingPrice) / originalPrice) * 100) : 0;
+          
+          return {
+            id: String(p.id),
+            brand: p.brand,
+            title: p.name,
+            price: sellingPrice,
+            originalPrice: p.price,
+            discount: hasDiscount ? `${discountPercent}% off` : undefined,
+            rating: p.rating,
+            reviewsCount: p.reviews,
+            image: p.image,
+            tag: p.stock_status === "Limited stock" ? "Limited stock" : undefined,
+            category: p.category
+          };
+        });
+        
+        setProducts(mapped);
+      } catch (err: any) {
+        console.error("Error loading products:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProducts();
+  }, []);
 
   const workoutScrollRef = useRef<HTMLDivElement>(null);
   const styleScrollRef = useRef<HTMLDivElement>(null);
@@ -28,7 +75,7 @@ export const Products: React.FC = () => {
   };
 
   // Filter products by search query
-  const filteredProducts = PRODUCTS.filter((product) => {
+  const filteredProducts = products.filter((product) => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return false;
     return (
@@ -38,11 +85,20 @@ export const Products: React.FC = () => {
     );
   });
 
-  const workoutProducts = PRODUCTS.filter((p) => p.category === "Workout Checklist");
-  const styleProducts = PRODUCTS.filter((p) => p.category === "Style Approved");
-  const shoesProducts = PRODUCTS.filter((p) => p.category === "Outdoor Shoes");
+  const workoutProducts = products.filter((p) => p.category === "Workout Checklist");
+  const styleProducts = products.filter((p) => p.category === "Style Approved");
+  const shoesProducts = products.filter((p) => p.category === "Outdoor Shoes");
 
-  const renderProductCard = (product: typeof PRODUCTS[0]) => {
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center font-sans">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#0072c6] mx-auto"></div>
+        <p className="text-zinc-500 text-sm mt-4 font-semibold">Loading products from database...</p>
+      </div>
+    );
+  }
+
+  const renderProductCard = (product: Product) => {
     const isLoved = isWishlisted(product.id);
     const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 

@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useCart } from "../../store/CartContext";
+import { useAuth } from "../../store/authStore";
+import Link from "next/link";
 import {
   Search,
   User,
@@ -24,6 +26,8 @@ export const Header: React.FC = () => {
     searchQuery,
     setSearchQuery,
   } = useCart();
+
+  const { user, isAuthenticated, logout } = useAuth();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
@@ -115,10 +119,25 @@ export const Header: React.FC = () => {
 
         {/* Actions Menu */}
         <div className="flex items-center gap-2 sm:gap-4 md:gap-6 text-zinc-700">
-          <button className="flex flex-col items-center gap-0.5 hover:text-[#0072c6] transition group">
-            <User className="h-5 w-5 text-zinc-800 group-hover:text-[#0072c6]" />
-            <span className="text-[10px] font-semibold hidden sm:inline">Sign In</span>
-          </button>
+          {isAuthenticated ? (
+            <button
+              onClick={logout}
+              className="flex flex-col items-center gap-0.5 hover:text-[#0072c6] transition group cursor-pointer"
+            >
+              <User className="h-5 w-5 text-zinc-800 group-hover:text-[#0072c6] fill-zinc-300" />
+              <span className="text-[10px] font-bold text-[#0072c6] hidden sm:inline truncate max-w-[60px]">
+                {user?.name.split(" ")[0]} (Out)
+              </span>
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="flex flex-col items-center gap-0.5 hover:text-[#0072c6] transition group cursor-pointer"
+            >
+              <User className="h-5 w-5 text-zinc-800 group-hover:text-[#0072c6]" />
+              <span className="text-[10px] font-semibold hidden sm:inline">Sign In</span>
+            </Link>
+          )}
           <button className="flex flex-col items-center gap-0.5 hover:text-[#0072c6] transition group">
             <Store className="h-5 w-5 text-zinc-800 group-hover:text-[#0072c6]" />
             <span className="text-[10px] font-semibold hidden sm:inline">My Store</span>
