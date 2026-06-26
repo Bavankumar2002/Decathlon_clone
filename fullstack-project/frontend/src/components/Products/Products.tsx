@@ -1,0 +1,310 @@
+"use client";
+
+import React, { useRef } from "react";
+import { PRODUCTS } from "../../data/products";
+import { useCart } from "../../store/CartContext";
+import { Heart, Star, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import Image from "next/image";
+
+export const Products: React.FC = () => {
+  const {
+    searchQuery,
+    setSearchQuery,
+    addToCart,
+    toggleWishlist,
+    isWishlisted,
+  } = useCart();
+
+  const workoutScrollRef = useRef<HTMLDivElement>(null);
+  const styleScrollRef = useRef<HTMLDivElement>(null);
+  const shoesScrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (ref: React.RefObject<HTMLDivElement | null>, direction: "left" | "right") => {
+    if (ref.current) {
+      const { scrollLeft } = ref.current;
+      const scrollTo = direction === "left" ? scrollLeft - 320 : scrollLeft + 320;
+      ref.current.scrollTo({ left: scrollTo, behavior: "smooth" });
+    }
+  };
+
+  // Filter products by search query
+  const filteredProducts = PRODUCTS.filter((product) => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return false;
+    return (
+      product.title.toLowerCase().includes(query) ||
+      product.brand.toLowerCase().includes(query) ||
+      product.category.toLowerCase().includes(query)
+    );
+  });
+
+  const workoutProducts = PRODUCTS.filter((p) => p.category === "Workout Checklist");
+  const styleProducts = PRODUCTS.filter((p) => p.category === "Style Approved");
+  const shoesProducts = PRODUCTS.filter((p) => p.category === "Outdoor Shoes");
+
+  const renderProductCard = (product: typeof PRODUCTS[0]) => {
+    const isLoved = isWishlisted(product.id);
+    const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+
+    return (
+      <div
+        key={product.id}
+        className="flex-shrink-0 w-64 bg-white border border-zinc-150 rounded-xl overflow-hidden shadow-xs hover:shadow-md hover:border-zinc-300 transition duration-300 flex flex-col justify-between relative group/card snap-start"
+      >
+        {/* Wishlist Heart Button */}
+        <button
+          onClick={() => toggleWishlist(product)}
+          className="absolute right-3.5 top-3.5 z-20 p-2 rounded-full bg-white/90 hover:bg-white text-zinc-400 hover:text-red-500 shadow-sm transition duration-300 border border-zinc-100 cursor-pointer"
+        >
+          <Heart
+            className={`h-4.5 w-4.5 transition-colors duration-300 ${
+              isLoved ? "text-red-500 fill-red-500" : ""
+            }`}
+          />
+        </button>
+
+        {/* Product Tag Badge */}
+        {product.tag && (
+          <span className="absolute left-3.5 top-3.5 z-20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-[#eceafc] text-[#4a39b3] rounded-sm shadow-xs">
+            {product.tag}
+          </span>
+        )}
+
+        {/* Product Image */}
+        <div className="relative h-64 w-full bg-zinc-50 overflow-hidden shrink-0">
+          <Image
+            src={product.image}
+            alt={product.title}
+            fill
+            className="object-cover group-hover/card:scale-105 transition duration-500"
+            sizes="256px"
+          />
+        </div>
+
+        {/* Card Body Info */}
+        <div className="p-4 flex-1 flex flex-col justify-between">
+          <div>
+            <span className="text-[10px] font-bold text-[#0072c6] tracking-widest uppercase">
+              {product.brand}
+            </span>
+            <h3 className="text-xs sm:text-sm font-semibold text-zinc-900 mt-0.5 line-clamp-2 h-10 leading-tight">
+              {product.title}
+            </h3>
+
+            {/* Rating */}
+            <div className="flex items-center gap-1 mt-2 text-zinc-500 text-[11px] font-medium">
+              <div className="flex items-center gap-0.5 text-amber-500">
+                <Star className="h-3.5 w-3.5 fill-current" />
+              </div>
+              <span className="text-zinc-800 font-bold">{product.rating}</span>
+              <span>•</span>
+              <span>
+                {product.reviewsCount >= 1000
+                  ? `${(product.reviewsCount / 1000).toFixed(1)}k`
+                  : product.reviewsCount}{" "}
+                reviews
+              </span>
+            </div>
+
+            {/* Price section */}
+            <div className="mt-3 flex flex-wrap items-baseline gap-2">
+              <span className="text-base font-black text-zinc-950">
+                ₹{product.price.toLocaleString("en-IN")}
+              </span>
+              {hasDiscount && (
+                <>
+                  <span className="text-xs text-zinc-400 line-through">
+                    MRP ₹{product.originalPrice?.toLocaleString("en-IN")}
+                  </span>
+                  {product.discount && (
+                    <span className="text-[10px] font-extrabold text-white bg-red-500 px-1.5 py-0.5 rounded-sm">
+                      {product.discount}
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Discount Code Promotion Text */}
+            {product.id === "inesis-umbrella-med-heavy" && (
+              <span className="inline-block mt-2 px-2 py-0.5 bg-[#eefaf5] text-[#227a51] text-[9px] font-bold rounded-sm border border-[#daf2e7]">
+                Buy 2 @ ₹1899 & Save ₹99 off
+              </span>
+            )}
+          </div>
+
+          {/* Add to Cart button */}
+          <button
+            onClick={() => addToCart(product)}
+            className="w-full mt-4 py-2 border border-zinc-200 hover:border-[#0072c6] hover:bg-[#0072c6] hover:text-white rounded-md text-xs font-bold text-zinc-800 transition duration-300 flex items-center justify-center gap-2 group/btn cursor-pointer"
+          >
+            <ShoppingCart className="h-3.5 w-3.5 text-zinc-500 group-hover/btn:text-white transition duration-300" />
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // If search query is active, display a responsive products grid of search results instead of standard sections
+  if (searchQuery.trim()) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 font-sans">
+        <div className="flex items-center justify-between border-b border-zinc-200 pb-4 mb-8">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight uppercase">
+              Search Results
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-500 mt-1 font-semibold">
+              Showing matching items for &ldquo;{searchQuery}&rdquo;
+            </p>
+          </div>
+          <button
+            onClick={() => setSearchQuery("")}
+            className="text-xs font-bold text-[#0072c6] hover:underline"
+          >
+            Clear Search
+          </button>
+        </div>
+
+        {filteredProducts.length === 0 ? (
+          <div className="py-24 text-center">
+            <h3 className="text-lg font-bold text-zinc-800">No products found</h3>
+            <p className="text-sm text-zinc-500 mt-2 max-w-sm mx-auto">
+              We couldn&apos;t find anything matching &ldquo;{searchQuery}&rdquo;. Try checking spelling or using broader keywords.
+            </p>
+            <button
+              onClick={() => setSearchQuery("")}
+              className="mt-6 px-6 py-2.5 bg-[#0072c6] text-white rounded-md text-sm font-semibold hover:bg-blue-700 transition"
+            >
+              Reset Filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredProducts.map(renderProductCard)}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Standard Landing View Sections (from screenshots)
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 font-sans space-y-16">
+      {/* SECTION 1: Shop your Workout Checklist */}
+      <section className="flex flex-col lg:flex-row gap-6 relative group">
+        {/* Left Headline Section */}
+        <div className="lg:w-60 flex flex-col justify-between py-2 shrink-0">
+          <div>
+            <span className="text-[10px] font-black text-[#0072c6] uppercase tracking-widest">
+              Checklist
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 mt-1 leading-tight tracking-tight uppercase">
+              Shop your <br /> Workout <br /> Checklist
+            </h2>
+          </div>
+          {/* Scroll navigation controls */}
+          <div className="flex gap-2 mt-6 lg:mt-0">
+            <button
+              onClick={() => scroll(workoutScrollRef, "left")}
+              className="p-3.5 border border-zinc-200 rounded-full hover:bg-zinc-50 text-zinc-800 shadow-xs hover:border-zinc-300 transition"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => scroll(workoutScrollRef, "right")}
+              className="p-3.5 border border-zinc-200 rounded-full hover:bg-zinc-50 text-zinc-800 shadow-xs hover:border-zinc-300 transition"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Scrollable Products List */}
+        <div
+          ref={workoutScrollRef}
+          className="flex-1 flex gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar snap-x scroll-smooth"
+        >
+          {workoutProducts.map(renderProductCard)}
+        </div>
+      </section>
+
+      {/* SECTION 2: Style Approved */}
+      <section className="flex flex-col lg:flex-row gap-6 relative group">
+        {/* Left Headline Section */}
+        <div className="lg:w-60 flex flex-col justify-between py-2 shrink-0">
+          <div>
+            <span className="text-[10px] font-black text-[#0072c6] uppercase tracking-widest">
+              Style Code
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 mt-1 leading-tight tracking-tight uppercase">
+              Style <br /> Approved.
+            </h2>
+          </div>
+          {/* Scroll navigation controls */}
+          <div className="flex gap-2 mt-6 lg:mt-0">
+            <button
+              onClick={() => scroll(styleScrollRef, "left")}
+              className="p-3.5 border border-zinc-200 rounded-full hover:bg-zinc-50 text-zinc-800 shadow-xs hover:border-zinc-300 transition"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => scroll(styleScrollRef, "right")}
+              className="p-3.5 border border-zinc-200 rounded-full hover:bg-zinc-50 text-zinc-800 shadow-xs hover:border-zinc-300 transition"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Scrollable Products List */}
+        <div
+          ref={styleScrollRef}
+          className="flex-1 flex gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar snap-x scroll-smooth"
+        >
+          {styleProducts.map(renderProductCard)}
+        </div>
+      </section>
+
+      {/* SECTION 3: Explore best of Outdoor Shoes */}
+      <section className="flex flex-col lg:flex-row gap-6 relative group">
+        {/* Left Headline Section */}
+        <div className="lg:w-60 flex flex-col justify-between py-2 shrink-0">
+          <div>
+            <span className="text-[10px] font-black text-[#0072c6] uppercase tracking-widest">
+              Outdoor Shoes
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 mt-1 leading-tight tracking-tight uppercase">
+              Explore best <br /> of Outdoor <br /> Shoes &amp; Boots
+            </h2>
+          </div>
+          {/* Scroll navigation controls */}
+          <div className="flex gap-2 mt-6 lg:mt-0">
+            <button
+              onClick={() => scroll(shoesScrollRef, "left")}
+              className="p-3.5 border border-zinc-200 rounded-full hover:bg-zinc-50 text-zinc-800 shadow-xs hover:border-zinc-300 transition"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => scroll(shoesScrollRef, "right")}
+              className="p-3.5 border border-zinc-200 rounded-full hover:bg-zinc-50 text-zinc-800 shadow-xs hover:border-zinc-300 transition"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Scrollable Products List */}
+        <div
+          ref={shoesScrollRef}
+          className="flex-1 flex gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar snap-x scroll-smooth"
+        >
+          {shoesProducts.map(renderProductCard)}
+        </div>
+      </section>
+    </div>
+  );
+};
