@@ -93,9 +93,15 @@ export const Hero: React.FC = () => {
               src={slide.image}
               alt={slide.title}
               fill
+              unoptimized
               className="object-cover"
               priority={index === 0}
               sizes="100vw"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                target.srcset = "";
+                target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400"><rect width="1200" height="400" fill="%2318181b"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="24" fill="%2371717a">Banner Image Offline</text></svg>';
+              }}
             />
             {/* Content card */}
             <div className="absolute inset-0 z-20 flex flex-col justify-center px-6 sm:px-12 md:px-24 text-white max-w-2xl">

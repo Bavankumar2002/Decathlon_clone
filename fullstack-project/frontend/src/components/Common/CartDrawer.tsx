@@ -64,8 +64,14 @@ export const CartDrawer: React.FC = () => {
                         src={item.product.image}
                         alt={item.product.title}
                         fill
+                        unoptimized
                         className="object-cover"
                         sizes="80px"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          target.srcset = "";
+                          target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="%23f4f4f5"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14" fill="%23a1a1aa">No Image Available</text></svg>';
+                        }}
                       />
                     </div>
                     <div className="flex-1 flex flex-col justify-between">

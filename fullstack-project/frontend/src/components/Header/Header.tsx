@@ -76,7 +76,7 @@ export const Header: React.FC = () => {
         </button>
 
         {/* Decathlon Logo */}
-        <a href="#" className="flex-shrink-0 flex items-center text-[#0072c6]">
+        <Link href="/" className="flex-shrink-0 flex items-center text-[#0072c6]">
           <svg
             className="h-7 sm:h-9 w-auto"
             viewBox="0 0 350 70"
@@ -93,7 +93,7 @@ export const Header: React.FC = () => {
             <path d="M272.8 10H284.4V50.8H306V60.4H272.8V10Z" />
             <path d="M341.2 52.6C336.8 57.8 330.6 60.4 322.6 60.4C314.6 60.4 308.4 57.8 304 52.6C299.6 47.4 297.4 40.2 297.4 31C297.4 21.8 299.6 14.6 304 9.4C308.4 4.2 314.6 1.6 322.6 1.6C330.6 1.6 336.8 4.2 341.2 9.4C345.6 14.6 347.8 21.8 347.8 31C347.8 40.2 345.6 47.4 341.2 52.6ZM312.8 45.6C315 48.8 318 50.4 321.8 50.4C325.6 50.4 328.6 48.8 330.8 45.6C333 42.4 334.1 37.5 334.1 31C334.1 24.5 333 19.6 330.8 16.4C328.6 13.2 325.6 11.6 321.8 11.6C318 11.6 315 13.2 312.8 16.4C310.6 19.6 309.5 24.5 309.5 31C309.5 37.5 310.6 42.4 312.8 45.6Z" />
           </svg>
-        </a>
+        </Link>
 
         {/* Search Bar */}
         <div className="flex-1 max-w-2xl relative hidden md:block">

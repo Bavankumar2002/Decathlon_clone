@@ -85,9 +85,9 @@ export const Products: React.FC = () => {
     );
   });
 
-  const workoutProducts = products.filter((p) => p.category === "Workout Checklist");
-  const styleProducts = products.filter((p) => p.category === "Style Approved");
-  const shoesProducts = products.filter((p) => p.category === "Outdoor Shoes");
+  const workoutProducts = products.filter((p) => p.category === "Activewear" || p.category === "Fitness Equipment");
+  const styleProducts = products.filter((p) => p.category === "Monsoon Essentials" || p.category === "Sports Accessories");
+  const shoesProducts = products.filter((p) => p.category === "Shoes" || p.category === "Hiking & Trekking" || p.category === "Bags & Backpacks" || p.category === "Cycling");
 
   if (loading) {
     return (
@@ -132,8 +132,14 @@ export const Products: React.FC = () => {
             src={product.image}
             alt={product.title}
             fill
+            unoptimized
             className="object-cover group-hover/card:scale-105 transition duration-500"
             sizes="256px"
+            onError={(e) => {
+              const target = e.currentTarget as HTMLImageElement;
+              target.srcset = "";
+              target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="%23f4f4f5"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14" fill="%23a1a1aa">No Image Available</text></svg>';
+            }}
           />
         </div>
 
@@ -254,10 +260,10 @@ export const Products: React.FC = () => {
         <div className="lg:w-60 flex flex-col justify-between py-2 shrink-0">
           <div>
             <span className="text-[10px] font-black text-[#0072c6] uppercase tracking-widest">
-              Checklist
+              Active & Gym
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 mt-1 leading-tight tracking-tight uppercase">
-              Shop your <br /> Workout <br /> Checklist
+              Shop your <br /> Workout &amp; Gym <br /> Essentials
             </h2>
           </div>
           {/* Scroll navigation controls */}
@@ -292,10 +298,10 @@ export const Products: React.FC = () => {
         <div className="lg:w-60 flex flex-col justify-between py-2 shrink-0">
           <div>
             <span className="text-[10px] font-black text-[#0072c6] uppercase tracking-widest">
-              Style Code
+              Monsoon & Accessories
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 mt-1 leading-tight tracking-tight uppercase">
-              Style <br /> Approved.
+              Style <br /> Approved. <br /> Monsoon &amp; Gear
             </h2>
           </div>
           {/* Scroll navigation controls */}
@@ -330,10 +336,10 @@ export const Products: React.FC = () => {
         <div className="lg:w-60 flex flex-col justify-between py-2 shrink-0">
           <div>
             <span className="text-[10px] font-black text-[#0072c6] uppercase tracking-widest">
-              Outdoor Shoes
+              Outdoor Gear &amp; Shoes
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 mt-1 leading-tight tracking-tight uppercase">
-              Explore best <br /> of Outdoor <br /> Shoes &amp; Boots
+              Explore best <br /> of Outdoor Shoes, <br /> Bags &amp; Bikes
             </h2>
           </div>
           {/* Scroll navigation controls */}
