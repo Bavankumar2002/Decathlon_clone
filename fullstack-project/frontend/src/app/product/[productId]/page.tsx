@@ -7,18 +7,18 @@ import { CartDrawer } from "../../../components/Common/CartDrawer";
 import { WishlistDrawer } from "../../../components/Common/WishlistDrawer";
 import { useCart } from "../../../store/CartContext";
 import { Product } from "../../../types";
-import { 
-  Star, 
-  ShoppingCart, 
-  Heart, 
-  Truck, 
-  RotateCcw, 
-  Store, 
-  ChevronRight, 
-  Minus, 
-  Plus, 
-  ShieldCheck, 
-  TrendingUp 
+import {
+  Star,
+  ShoppingCart,
+  Heart,
+  Truck,
+  RotateCcw,
+  Store,
+  ChevronRight,
+  Minus,
+  Plus,
+  ShieldCheck,
+  TrendingUp
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -81,7 +81,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           throw new Error("Failed to load product details");
         }
         const data = await productRes.json();
-        
+
         // Map database fields to front-end schema
         const sellingPrice = data.discount_price ?? data.price;
         const originalPrice = data.price;
@@ -227,7 +227,7 @@ export default function ProductDetailPage({ params }: PageProps) {
         {/* Main Product Frame */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div className="bg-white border border-zinc-150 rounded-3xl p-6 md:p-10 shadow-xs flex flex-col lg:flex-row gap-10 md:gap-16">
-            
+
             {/* Left: Product Image Gallery */}
             <div className="lg:w-1/2 flex flex-col gap-4">
               <div className="relative aspect-square w-full bg-zinc-50 rounded-2xl overflow-hidden border border-zinc-100 group">
@@ -245,18 +245,17 @@ export default function ProductDetailPage({ params }: PageProps) {
                   </span>
                 )}
               </div>
-              
+
               {/* Thumbnail Bar */}
               <div className="grid grid-cols-4 gap-3">
                 {galleryImages.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(img)}
-                    className={`relative aspect-square w-full rounded-xl overflow-hidden border-2 bg-zinc-50 transition ${
-                      selectedImage === img 
-                        ? "border-[#0072c6] ring-2 ring-blue-100 scale-[1.02]" 
+                    className={`relative aspect-square w-full rounded-xl overflow-hidden border-2 bg-zinc-50 transition ${selectedImage === img
+                        ? "border-[#0072c6] ring-2 ring-blue-100 scale-[1.02]"
                         : "border-zinc-200 hover:border-zinc-300"
-                    }`}
+                      }`}
                   >
                     <Image
                       src={img}
@@ -278,7 +277,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                   <TrendingUp className="h-4.5 w-4.5" />
                   {product.brand} Official
                 </span>
-                
+
                 <h1 className="text-2xl sm:text-3xl font-black text-zinc-950 leading-tight uppercase tracking-tight">
                   {product.title}
                 </h1>
@@ -287,11 +286,10 @@ export default function ProductDetailPage({ params }: PageProps) {
                 <div className="flex items-center gap-2 mt-4 text-xs font-bold text-zinc-500 border-b border-zinc-100 pb-4">
                   <div className="flex items-center gap-0.5 text-amber-500">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`h-4.5 w-4.5 ${
-                          i < Math.round(product.rating) ? "fill-current" : "text-zinc-200"
-                        }`} 
+                      <Star
+                        key={i}
+                        className={`h-4.5 w-4.5 ${i < Math.round(product.rating) ? "fill-current" : "text-zinc-200"
+                          }`}
                       />
                     ))}
                   </div>
@@ -337,11 +335,10 @@ export default function ProductDetailPage({ params }: PageProps) {
                       <button
                         key={color.name}
                         onClick={() => setSelectedColor(color.name)}
-                        className={`w-9 h-9 rounded-full ${color.class} transition cursor-pointer border-2 border-white ring-2 ${
-                          selectedColor === color.name 
-                            ? "ring-[#0072c6] scale-105" 
+                        className={`w-9 h-9 rounded-full ${color.class} transition cursor-pointer border-2 border-white ring-2 ${selectedColor === color.name
+                            ? "ring-[#0072c6] scale-105"
                             : "ring-zinc-200 hover:ring-zinc-300"
-                        }`}
+                          }`}
                         title={color.name}
                       />
                     ))}
@@ -358,11 +355,10 @@ export default function ProductDetailPage({ params }: PageProps) {
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`px-4 py-2 border rounded-md text-xs font-extrabold uppercase transition cursor-pointer ${
-                          selectedSize === size
+                        className={`px-4 py-2 border rounded-md text-xs font-extrabold uppercase transition cursor-pointer ${selectedSize === size
                             ? "bg-[#0072c6] border-[#0072c6] text-white font-black"
                             : "bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50"
-                        }`}
+                          }`}
                       >
                         {size}
                       </button>
