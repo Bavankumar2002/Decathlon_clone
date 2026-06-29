@@ -69,6 +69,21 @@ app.get("/api/products", async (req, res) => {
   }
 });
 
+// GET /api/products/:id - Get a single product by ID
+app.get("/api/products/:id", async (req, res) => {
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: parseInt(req.params.id) },
+    });
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // User Registration Route (Placeholder / Starter route to verify Prisma schema)
 app.post("/api/register", async (req, res) => {
   const { name, email, password } = req.body;

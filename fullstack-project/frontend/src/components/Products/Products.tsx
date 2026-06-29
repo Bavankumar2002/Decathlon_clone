@@ -5,6 +5,7 @@ import { useCart } from "../../store/CartContext";
 import { Product } from "../../types";
 import { Heart, Star, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export const Products: React.FC = () => {
   const {
@@ -127,7 +128,7 @@ export const Products: React.FC = () => {
         )}
 
         {/* Product Image */}
-        <div className="relative h-64 w-full bg-zinc-50 overflow-hidden shrink-0">
+        <Link href={`/product/${product.id}`} className="relative h-64 w-full bg-zinc-50 overflow-hidden shrink-0 block cursor-pointer">
           <Image
             src={product.image}
             alt={product.title}
@@ -141,7 +142,7 @@ export const Products: React.FC = () => {
               target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="%23f4f4f5"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14" fill="%23a1a1aa">No Image Available</text></svg>';
             }}
           />
-        </div>
+        </Link>
 
         {/* Card Body Info */}
         <div className="p-4 flex-1 flex flex-col justify-between">
@@ -149,9 +150,11 @@ export const Products: React.FC = () => {
             <span className="text-[10px] font-bold text-[#0072c6] tracking-widest uppercase">
               {product.brand}
             </span>
-            <h3 className="text-xs sm:text-sm font-semibold text-zinc-900 mt-0.5 line-clamp-2 h-10 leading-tight">
-              {product.title}
-            </h3>
+            <Link href={`/product/${product.id}`} className="hover:text-[#0072c6] transition block">
+              <h3 className="text-xs sm:text-sm font-semibold text-zinc-900 mt-0.5 line-clamp-2 h-10 leading-tight">
+                {product.title}
+              </h3>
+            </Link>
 
             {/* Rating */}
             <div className="flex items-center gap-1 mt-2 text-zinc-500 text-[11px] font-medium">
@@ -196,13 +199,13 @@ export const Products: React.FC = () => {
           </div>
 
           {/* Add to Cart button */}
-          <button
-            onClick={() => addToCart(product)}
+          <Link
+            href={`/product/${product.id}`}
             className="w-full mt-4 py-2 border border-zinc-200 hover:border-[#0072c6] hover:bg-[#0072c6] hover:text-white rounded-md text-xs font-bold text-zinc-800 transition duration-300 flex items-center justify-center gap-2 group/btn cursor-pointer"
           >
             <ShoppingCart className="h-3.5 w-3.5 text-zinc-500 group-hover/btn:text-white transition duration-300" />
             Add to Cart
-          </button>
+          </Link>
         </div>
       </div>
     );

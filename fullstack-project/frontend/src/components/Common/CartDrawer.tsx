@@ -58,7 +58,7 @@ export const CartDrawer: React.FC = () => {
             ) : (
               <div className="space-y-6">
                 {cart.map((item) => (
-                  <div key={item.product.id} className="flex gap-4 border-b border-zinc-100 pb-4">
+                  <div key={`${item.product.id}-${item.size || "default"}-${item.color || "default"}`} className="flex gap-4 border-b border-zinc-100 pb-4">
                     <div className="relative h-20 w-20 rounded-md overflow-hidden bg-zinc-50 flex-shrink-0">
                       <Image
                         src={item.product.image}
@@ -82,12 +82,26 @@ export const CartDrawer: React.FC = () => {
                         <h4 className="text-sm font-medium text-zinc-900 line-clamp-1">
                           {item.product.title}
                         </h4>
+                        {(item.size || item.color) && (
+                          <div className="flex gap-2 mt-1">
+                            {item.size && (
+                              <span className="px-1.5 py-0.5 bg-zinc-100 text-zinc-600 text-[10px] font-bold rounded uppercase">
+                                Size: {item.size}
+                              </span>
+                            )}
+                            {item.color && (
+                              <span className="px-1.5 py-0.5 bg-zinc-100 text-zinc-600 text-[10px] font-bold rounded uppercase">
+                                Color: {item.color}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center justify-between mt-2">
                         {/* Quantity Counter */}
                         <div className="flex items-center border border-zinc-200 rounded-md overflow-hidden">
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.size, item.color)}
                             className="p-1.5 hover:bg-zinc-50 text-zinc-500 transition"
                           >
                             <Minus className="h-3.5 w-3.5" />
@@ -96,7 +110,7 @@ export const CartDrawer: React.FC = () => {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.size, item.color)}
                             className="p-1.5 hover:bg-zinc-50 text-zinc-500 transition"
                           >
                             <Plus className="h-3.5 w-3.5" />
@@ -108,7 +122,7 @@ export const CartDrawer: React.FC = () => {
                             ₹{(item.product.price * item.quantity).toLocaleString("en-IN")}
                           </span>
                           <button
-                            onClick={() => removeFromCart(item.product.id)}
+                            onClick={() => removeFromCart(item.product.id, item.size, item.color)}
                             className="p-1.5 text-zinc-400 hover:text-red-500 rounded-md hover:bg-red-50 transition"
                           >
                             <Trash2 className="h-4 w-4" />

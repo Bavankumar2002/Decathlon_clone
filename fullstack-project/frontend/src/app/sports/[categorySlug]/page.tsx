@@ -364,7 +364,8 @@ export default function CategorySubStore({ params }: PageProps) {
           </span>
         )}
 
-        <div className="relative h-48 w-full bg-zinc-50 overflow-hidden shrink-0">
+        {/* Product Image */}
+        <Link href={`/product/${product.id}`} className="relative h-48 w-full bg-zinc-50 overflow-hidden shrink-0 block cursor-pointer">
           <Image
             src={product.image}
             alt={product.title}
@@ -378,16 +379,18 @@ export default function CategorySubStore({ params }: PageProps) {
               target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="%23f4f4f5"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14" fill="%23a1a1aa">No Image Available</text></svg>';
             }}
           />
-        </div>
+        </Link>
 
         <div className="p-4 flex-1 flex flex-col justify-between">
           <div>
             <span className="text-[9px] font-black text-[#0072c6] tracking-widest uppercase">
               {product.brand}
             </span>
-            <h3 className="text-xs font-semibold text-zinc-900 mt-0.5 line-clamp-2 h-10 leading-tight">
-              {product.title}
-            </h3>
+            <Link href={`/product/${product.id}`} className="hover:text-[#0072c6] transition block">
+              <h3 className="text-xs font-semibold text-zinc-900 mt-0.5 line-clamp-2 h-10 leading-tight">
+                {product.title}
+              </h3>
+            </Link>
 
             <div className="flex items-center gap-1 mt-1 text-zinc-500 text-[10px] font-medium">
               <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
@@ -408,13 +411,13 @@ export default function CategorySubStore({ params }: PageProps) {
             </div>
           </div>
 
-          <button
-            onClick={() => addToCart(product)}
+          <Link
+            href={`/product/${product.id}`}
             className="w-full mt-4 py-1.5 border border-zinc-200 hover:border-[#0072c6] hover:bg-[#0072c6] hover:text-white rounded-md text-xs font-bold text-zinc-800 transition duration-300 flex items-center justify-center gap-1.5 group/btn cursor-pointer"
           >
             <ShoppingCart className="h-3 w-3 text-zinc-500 group-hover/btn:text-white transition duration-300" />
             Add to Cart
-          </button>
+          </Link>
         </div>
       </div>
     );
